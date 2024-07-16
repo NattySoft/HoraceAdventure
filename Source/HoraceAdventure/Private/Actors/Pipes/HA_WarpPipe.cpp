@@ -25,7 +25,7 @@ AHA_WarpPipe::AHA_WarpPipe()
 	WarpOutPoint->SetupAttachment(GetRootComponent());
 
 	PipeBody->SetRelativeLocation(FVector(0.f, 0.f, 5.f));
-	PipeBody->SetRelativeScale3D(FVector(2.25f, 2.25f, .1f));
+	PipeBody->SetRelativeScale3D(FVector(2.25f, 2.25f, 1.f));
 
 	Mesh->SetRelativeLocation(FVector(0.f, 0.f, 35.f));
 	Mesh->SetRelativeScale3D(FVector(2.75f, 2.75f, .5f));
@@ -43,5 +43,29 @@ AHA_WarpPipe::AHA_WarpPipe()
 
 	WarpInPoint->SetRelativeLocation(FVector(0.f, 0.f, 70.f));
 	WarpOutPoint->SetRelativeLocation(FVector(0.f, 0.f, -35.f));
+	
+}
+
+void AHA_WarpPipe::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
+void AHA_WarpPipe::OnConstruction(const FTransform& Transform)
+{
+	Super::OnConstruction(Transform);
+
+	const float TruckEndPointLength = PipeEndPoint.Length();
+	const int32 TrunkEndPointLastIndex = FMath::TruncToInt(TruckEndPointLength / 100.f);
+
+	PipeBody->ClearInstances();
+	for (int i = 0; i < TrunkEndPointLastIndex; i++)
+	{
+		FVector MushLocation = FVector::ZeroVector;
+		MushLocation.Z = static_cast<float>(i * -100);
+		FTransform AddPosition = FTransform();
+		AddPosition.SetLocation(MushLocation);
+		PipeBody->AddInstance(AddPosition);
+	}
 	
 }

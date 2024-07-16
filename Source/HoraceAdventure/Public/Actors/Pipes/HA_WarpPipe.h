@@ -19,6 +19,10 @@ public:
 	AHA_WarpPipe();
 	
 protected:
+	virtual void BeginPlay() override;
+	virtual void OnConstruction(const FTransform& Transform) override;
+
+	
 	UPROPERTY(EditDefaultsOnly)
 	UInstancedStaticMeshComponent* PipeBody;
 
@@ -33,4 +37,9 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly)
 	UBillboardComponent* WarpOutPoint;
+
+	UPROPERTY(EditAnywhere, Category="WarpPipe", meta=(MakeEditWidget="true"))
+	FVector PipeEndPoint = FVector(0.f, 0.f, -100.f);
+
+	
 };
