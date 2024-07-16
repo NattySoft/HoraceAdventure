@@ -6,6 +6,7 @@
 #include "Components/BillboardComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/InstancedStaticMeshComponent.h"
+#include "Libraries/FunctionsLibrary.h"
 
 AHA_WarpPipe::AHA_WarpPipe()
 {
@@ -49,6 +50,9 @@ AHA_WarpPipe::AHA_WarpPipe()
 void AHA_WarpPipe::BeginPlay()
 {
 	Super::BeginPlay();
+
+	Collision->OnComponentBeginOverlap.AddDynamic(this, &AHA_WarpPipe::OnCollisionBeginOverlap);
+	Collision->OnComponentEndOverlap.AddDynamic(this, &AHA_WarpPipe::OnCollisionEndOverlap);
 }
 
 void AHA_WarpPipe::OnConstruction(const FTransform& Transform)
@@ -70,16 +74,41 @@ void AHA_WarpPipe::OnConstruction(const FTransform& Transform)
 	
 }
 
+void AHA_WarpPipe::OnCollisionBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	AHA_Horace* Horace = UFunctionsLibrary::GetHorace(OtherActor);
+	if (!Horace) return;
+
+	bIsGateOpen = true;
+}
+
+void AHA_WarpPipe::OnCollisionEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	AHA_Horace* Horace = UFunctionsLibrary::GetHorace(OtherActor);
+	if (!Horace) return;
+
+	bIsGateOpen = false;
+}
+
+void AHA_WarpPipe::Interact()
+{
+	MovePlayerUp();
+	MovePlayerDown();
+}
+
 void AHA_WarpPipe::MovePlayerUp()
 {
 	if (!bCanInteract) return;
-	if (!bIsDownPipe) return;
+	if (bIsDownPipe) return;
 	
 }
 
 void AHA_WarpPipe::MovePlayerDown()
 {
 	if (!bCanInteract) return;
+	if (!bIsDownPipe) return;
 	
 }
 
