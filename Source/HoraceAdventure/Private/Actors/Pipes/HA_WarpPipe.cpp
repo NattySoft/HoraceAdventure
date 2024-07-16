@@ -69,3 +69,17 @@ void AHA_WarpPipe::OnConstruction(const FTransform& Transform)
 	}
 	
 }
+
+void AHA_WarpPipe::MovePlayerUp()
+{
+	if (!bCanInteract) return;
+	if (!bIsDownPipe) return;
+	
+}
+
+void AHA_WarpPipe::MovePlayerDown()
+{
+	if (!bCanInteract) return;
+	
+}
+

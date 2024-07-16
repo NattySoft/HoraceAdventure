@@ -22,6 +22,11 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void OnConstruction(const FTransform& Transform) override;
 
+	UFUNCTION(BlueprintCallable)
+	void MovePlayerUp();
+
+	UFUNCTION(BlueprintCallable)
+	void MovePlayerDown();
 	
 	UPROPERTY(EditDefaultsOnly)
 	UInstancedStaticMeshComponent* PipeBody;
@@ -41,5 +46,10 @@ protected:
 	UPROPERTY(EditAnywhere, Category="WarpPipe", meta=(MakeEditWidget="true"))
 	FVector PipeEndPoint = FVector(0.f, 0.f, -100.f);
 
+	UPROPERTY(EditAnywhere, Category="WarpPipe")
+	bool bCanInteract = false;
+
+	UPROPERTY(EditAnywhere, Category="WarpPipe")
+	bool bIsDownPipe = true;
 	
 };

@@ -1,7 +1,16 @@
 ﻿/.idea/
 /Binaries/
 /Saved/
-/Content/
+/Content/__ExternalActors__
+/Content/__ExternalObjects__
+/Content/Characters
+/Content/Collections
+/Content/Developers
+/Content/InfinityBladeEffects
+/Content/LevelPrototyping
+/Content/StarterContent
+/Content/ThirdPerson/Blueprints
+/Content/ThirdPerson/Maps
 /Downloaded Content/
 /Intermediate/
 /.vs/
