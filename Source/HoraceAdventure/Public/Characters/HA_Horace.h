@@ -78,10 +78,7 @@ protected:
 	UPROPERTY()
 	AHA_WarpPipe* OverlappingPipe;
 
-	// Broadcast the death sequence to listeners
-	FPlayerStartsDeathSequence PlayerStartsDeathSequence;
 	FTransform StartDeathTransform;
-	
 	// ######### Death timeline ##########
 	UPROPERTY(EditAnywhere, Category="Horace|Death Timelines")
 	UCurveFloat* DeathMovingCurve = nullptr;
@@ -108,6 +105,9 @@ private:
 	void DestroyHorace();
 	
 public:
+	// Broadcast the death sequence to listeners
+	FPlayerStartsDeathSequence PlayerStartsDeathSequence;
+	
 	FORCEINLINE int32 GetHitPoints() const { return HitPoints; }
 	FORCEINLINE bool HasFireFlower() const { return bHasFireFlower; }
 	FORCEINLINE void SetHasFireFlower(const bool InValue) { bHasFireFlower = InValue; }

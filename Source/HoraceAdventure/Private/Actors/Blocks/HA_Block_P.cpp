@@ -68,6 +68,12 @@ void AHA_Block_P::OnBoxComponentHit(UPrimitiveComponent* HitComponent, AActor* O
 	ActivateHiddenBoxes();
 	ActivateAllPBlocks();
 
+	// Listen of the player died
+	Horace->PlayerStartsDeathSequence.AddLambda([this]()
+	{
+		DeactivateAllPBlocksOnTimerOver();
+	});
+	
 	FTimerHandle PBlockTimer;
 	GetWorldTimerManager().SetTimer(PBlockTimer, this, &AHA_Block_P::DeactivateAllPBlocksOnTimerOver, BlockTimeDuration);
 }
