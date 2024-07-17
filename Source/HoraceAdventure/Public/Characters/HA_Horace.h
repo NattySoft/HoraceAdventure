@@ -11,9 +11,9 @@ class AHA_WarpPipe;
 class UHA_FireBallComponent;
 class UHA_GrowingComponent;
 class AHA_PlayerController;
-/**
- * 
- */
+
+DECLARE_MULTICAST_DELEGATE(FPlayerStartsDeathSequence);
+
 UCLASS()
 class HORACEADVENTURE_API AHA_Horace : public AHA_BaseCharacter
 {
@@ -28,48 +28,61 @@ protected:
 	UPROPERTY()
 	AHA_PlayerController* HoraceController;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Player Components")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Horace|Components")
 	UArrowComponent* FireBallSpawnPoint;
 	
-	UPROPERTY(EditAnywhere, Category="Player Components")
+	UPROPERTY(EditAnywhere, Category="Horace|Components")
 	UHA_GrowingComponent* GrowingComponent;
 
-	UPROPERTY(EditAnywhere, Category="Player Components")
+	UPROPERTY(EditAnywhere, Category="Horace|Components")
 	UHA_FireBallComponent* FireBallComponent;
 
 	
 	
-	UPROPERTY(EditAnywhere, Category="Player Apparence")
+	UPROPERTY(EditAnywhere, Category="Horace|Apparence")
 	TArray<UMaterialInstance*> HitMaterials;
 
-	UPROPERTY(EditAnywhere, Category="Player Apparence")
+	UPROPERTY(EditAnywhere, Category="Horace|Apparence")
 	FVector RespawnSize = FVector(.75f);
 
 
 	
-	UPROPERTY(EditAnywhere, Category="Player Sounds")
+	UPROPERTY(EditAnywhere, Category="Horace|Sounds")
 	USoundBase* PowerUpSound;
 
-	UPROPERTY(EditAnywhere, Category="Player Sounds")
+	UPROPERTY(EditAnywhere, Category="Horace|Sounds")
 	USoundBase* HitSound;
 
+	UPROPERTY(EditAnywhere, Category="Horace|Sounds")
+	USoundBase* DieSound;
+
+	UPROPERTY(EditAnywhere, Category="Horace|Effects")
+	UParticleSystem* DieEffect;
+
+	UPROPERTY(EditAnywhere, Category="Horace|Effects")
+	UAnimationAsset* DieAnimation;
 	
-	
-	UPROPERTY(EditAnywhere, Category="Player Stats")
+	UPROPERTY(EditAnywhere, Category="Horace|Stats")
 	int32 HitPoints = EHP_Small;
 
-	UPROPERTY(EditAnywhere, Category="Player Stats")
+	UPROPERTY(EditAnywhere, Category="Horace|Stats")
 	int32 MaxHitPoints = 2;
 
-	UPROPERTY(EditAnywhere, Category="Player Health")
+	UPROPERTY(EditAnywhere, Category="Horace|Health")
 	FVector PlayerScaleSmall = FVector(1.f, 1.f, 1.f);
 
-	UPROPERTY(EditAnywhere, Category="Player Health")
+	UPROPERTY(EditAnywhere, Category="Horace|Health")
 	bool bHasFireFlower = false;
 
 	UPROPERTY()
 	AHA_WarpPipe* OverlappingPipe;
 
+	// Broadcast the death sequence to listeners
+	FPlayerStartsDeathSequence PlayerStartsDeathSequence;
+	
+private:
+	void DestroyActorFX();
+	
 public:
 	FORCEINLINE int32 GetHitPoints() const { return HitPoints; }
 	FORCEINLINE bool HasFireFlower() const { return bHasFireFlower; }
@@ -89,4 +102,7 @@ public:
 	void InteractWithPipe();
 
 	void SetNextSpawnLocation(const FTransform& InTransform) const;
+
+	UFUNCTION(CallInEditor)
+	void PlayerDies();
 };

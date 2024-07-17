@@ -7,9 +7,12 @@
 #include "ActorsComponents/HA_FireBallComponent.h"
 #include "ActorsComponents/HA_GrowingComponent.h"
 #include "Components/ArrowComponent.h"
+#include "Components/CapsuleComponent.h"
 #include "Controllers/HA_PlayerController.h"
 #include "Core/HA_GameModeBase.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Libraries/FunctionsLibrary.h"
 
 AHA_Horace::AHA_Horace()
 {
@@ -94,4 +97,22 @@ void AHA_Horace::SetNextSpawnLocation(const FTransform& InTransform) const
 	AHA_GameModeBase* HoraceGameMode = Cast<AHA_GameModeBase>(UGameplayStatics::GetGameMode(this));
 	checkf(HoraceGameMode, TEXT("Game mode has not been set to Horace Game Mode"));
 	HoraceGameMode->SetSpawnTransform(InTransform);
+}
+
+void AHA_Horace::DestroyActorFX()
+{
+	DisableInput(GetHoraceController());
+	UFunctionsLibrary::PlaySoundFx(this, DieSound);
+	UFunctionsLibrary::PlayInteractFx(this, nullptr, DieEffect, GetActorLocation(), FVector(3.f));
+	GetMovementComponent()->Deactivate();
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	if (DieAnimation) GetMesh()->PlayAnimation(DieAnimation, false);
+}
+
+void AHA_Horace::PlayerDies()
+{
+	DestroyActorFX();
+	PlayerStartsDeathSequence.Broadcast();
+	FTransform StartDeathTransform = GetActorTransform();
+	GetMesh()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 }
