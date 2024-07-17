@@ -24,7 +24,7 @@ AHA_Horace::AHA_Horace()
 void AHA_Horace::BeginPlay()
 {
 	Super::BeginPlay();
-	SetTransformAsNextSpawnLocation();
+	SetNextSpawnLocation(GetActorTransform());
 }
 
 AHA_PlayerController* AHA_Horace::GetHoraceController()
@@ -32,13 +32,6 @@ AHA_PlayerController* AHA_Horace::GetHoraceController()
 	if (HoraceController) return HoraceController;
 	HoraceController = Cast<AHA_PlayerController>(GetController());
 	return HoraceController;
-}
-
-void AHA_Horace::SetTransformAsNextSpawnLocation()
-{
-	AHA_GameModeBase* HoraceGameMode = Cast<AHA_GameModeBase>(UGameplayStatics::GetGameMode(this));
-	checkf(HoraceGameMode, TEXT("Game mode has not been set to Horace Game Mode"));
-	HoraceGameMode->SetSpawnTransform(GetActorTransform());
 }
 
 void AHA_Horace::AdjustHitPoints(const int32 HitPointsModifier)
@@ -95,4 +88,11 @@ void AHA_Horace::InteractWithPipe()
 {
 	if (!OverlappingPipe) return;
 	OverlappingPipe->Interact(this);
+}
+
+void AHA_Horace::SetNextSpawnLocation(const FTransform& InTransform) const
+{
+	AHA_GameModeBase* HoraceGameMode = Cast<AHA_GameModeBase>(UGameplayStatics::GetGameMode(this));
+	checkf(HoraceGameMode, TEXT("Game mode has not been set to Horace Game Mode"));
+	HoraceGameMode->SetSpawnTransform(InTransform);
 }

@@ -159,7 +159,6 @@ void AHA_WarpPipe::PipeTickTimeline()
 
 void AHA_WarpPipe::PipeMovingUpdate(const float Alpha) const
 {
-	// if (!IsValid(BoxPipe)) return;
 	if (!IsValid(HoraceRef)) return;
 
 	FVector WarpLocation;

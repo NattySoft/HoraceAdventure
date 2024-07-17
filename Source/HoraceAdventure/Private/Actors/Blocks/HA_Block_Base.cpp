@@ -70,7 +70,7 @@ void AHA_BlockBase::OnCoinColliderBeginOverlap(UPrimitiveComponent* OverlappedCo
 
 void AHA_BlockBase::PlaySoundEffect() const
 {
-	UFunctionsLibrary::PlayBlockSoundFx(this, InteractSound);
+	UFunctionsLibrary::PlaySoundFx(this, InteractSound);
 }
 
 void AHA_BlockBase::PlayInactiveSoundEffect() const
@@ -80,7 +80,7 @@ void AHA_BlockBase::PlayInactiveSoundEffect() const
 
 void AHA_BlockBase::ShowEffects() const
 {
-	UFunctionsLibrary::PlayBlockInteractFx(this, nullptr, InteractVFX_Particle, GetActorLocation());
+	UFunctionsLibrary::PlayInteractFx(this, nullptr, InteractVFX_Particle, GetActorLocation());
 }
 
 void AHA_BlockBase::ShowPointsWidget(const FTransform& SpawnTransform)

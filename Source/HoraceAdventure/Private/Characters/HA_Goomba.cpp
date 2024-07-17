@@ -216,7 +216,7 @@ void AHA_Goomba::MoveDirectionWithPlayerInRange()
 
 void AHA_Goomba::DestroyGoomba()
 {
-	UFunctionsLibrary::PlayBlockSoundFx(this, ElimSound);
-	UFunctionsLibrary::PlayBlockInteractFx(this, nullptr, ElimEffect, Collider->GetComponentLocation());
+	UFunctionsLibrary::PlaySoundFx(this, ElimSound);
+	UFunctionsLibrary::PlayInteractFx(this, nullptr, ElimEffect, Collider->GetComponentLocation());
 	Destroy();
 }

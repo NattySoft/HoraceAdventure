@@ -87,5 +87,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void InteractWithPipe();
 
-	void SetTransformAsNextSpawnLocation();
+	void SetNextSpawnLocation(const FTransform& InTransform) const;
 };

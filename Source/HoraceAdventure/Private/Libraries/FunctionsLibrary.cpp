@@ -6,7 +6,7 @@
 #include "Characters/HA_Horace.h"
 #include "Kismet/GameplayStatics.h"
 
-void UFunctionsLibrary::PlayBlockSoundFx(const UObject* WorldContextObject, USoundBase* SFX)
+void UFunctionsLibrary::PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX)
 {
 	if (SFX)
 	{
@@ -14,16 +14,17 @@ void UFunctionsLibrary::PlayBlockSoundFx(const UObject* WorldContextObject, USou
 	}
 }
 
-void UFunctionsLibrary::PlayBlockInteractFx(const UObject* WorldContextObject, UNiagaraSystem* VFX_Niagara, UParticleSystem* VFX_Particle, const FVector& VFX_Location)
+void UFunctionsLibrary::PlayInteractFx(const UObject* WorldContextObject, UNiagaraSystem* VFX_Niagara,
+	UParticleSystem* VFX_Particle, const FVector& VFX_Location, const FVector& Scale)
 {
 	if (VFX_Niagara)
 	{
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(WorldContextObject, VFX_Niagara, VFX_Location);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(WorldContextObject, VFX_Niagara, VFX_Location, FRotator::ZeroRotator, Scale);
 	}
 
 	if (VFX_Particle)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, VFX_Particle, VFX_Location);
+		UGameplayStatics::SpawnEmitterAtLocation(WorldContextObject, VFX_Particle, VFX_Location, FRotator::ZeroRotator, Scale);
 	}
 }
 
