@@ -23,6 +23,8 @@ public:
 	AHA_Horace();
 	
 protected:
+	virtual void BeginPlay() override;
+	
 	UPROPERTY()
 	AHA_PlayerController* HoraceController;
 
@@ -34,15 +36,24 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Player Components")
 	UHA_FireBallComponent* FireBallComponent;
+
+	
 	
 	UPROPERTY(EditAnywhere, Category="Player Apparence")
 	TArray<UMaterialInstance*> HitMaterials;
 
+	UPROPERTY(EditAnywhere, Category="Player Apparence")
+	FVector RespawnSize;
+
+
+	
 	UPROPERTY(EditAnywhere, Category="Player Sounds")
 	USoundBase* PowerUpSound;
 
 	UPROPERTY(EditAnywhere, Category="Player Sounds")
 	USoundBase* HitSound;
+
+	
 	
 	UPROPERTY(EditAnywhere, Category="Player Stats")
 	int32 HitPoints = EHP_Small;
@@ -58,7 +69,7 @@ protected:
 
 	UPROPERTY()
 	AHA_WarpPipe* OverlappingPipe;
-	
+
 public:
 	FORCEINLINE int32 GetHitPoints() const { return HitPoints; }
 	FORCEINLINE bool HasFireFlower() const { return bHasFireFlower; }
@@ -69,10 +80,12 @@ public:
 	AHA_PlayerController* GetHoraceController();
 	void AdjustHitPoints(const int32 HitPointsModifier);
 	void GotFlowerPower();
-
+	
 	UFUNCTION(BlueprintCallable)
 	void ShootFireBall();
 	
 	UFUNCTION(BlueprintCallable)
 	void InteractWithPipe();
+
+	void SetTransformAsNextSpawnLocation();
 };

@@ -8,6 +8,7 @@
 #include "ActorsComponents/HA_GrowingComponent.h"
 #include "Components/ArrowComponent.h"
 #include "Controllers/HA_PlayerController.h"
+#include "Core/HA_GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
 AHA_Horace::AHA_Horace()
@@ -17,6 +18,13 @@ AHA_Horace::AHA_Horace()
 	FireBallComponent = CreateDefaultSubobject<UHA_FireBallComponent>("FireBallComponent");
 
 	FireBallSpawnPoint->SetupAttachment(GetMesh());
+	RespawnSize = FVector(.75f);
+}
+
+void AHA_Horace::BeginPlay()
+{
+	Super::BeginPlay();
+	SetTransformAsNextSpawnLocation();
 }
 
 AHA_PlayerController* AHA_Horace::GetHoraceController()
@@ -24,6 +32,13 @@ AHA_PlayerController* AHA_Horace::GetHoraceController()
 	if (HoraceController) return HoraceController;
 	HoraceController = Cast<AHA_PlayerController>(GetController());
 	return HoraceController;
+}
+
+void AHA_Horace::SetTransformAsNextSpawnLocation()
+{
+	AHA_GameModeBase* HoraceGameMode = Cast<AHA_GameModeBase>(UGameplayStatics::GetGameMode(this));
+	checkf(HoraceGameMode, TEXT("Game mode has not been set to Horace Game Mode"));
+	HoraceGameMode->SetSpawnTransform(GetActorTransform());
 }
 
 void AHA_Horace::AdjustHitPoints(const int32 HitPointsModifier)

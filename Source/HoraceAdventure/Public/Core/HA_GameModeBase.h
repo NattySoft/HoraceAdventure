@@ -13,5 +13,12 @@ UCLASS()
 class HORACEADVENTURE_API AHA_GameModeBase : public AGameModeBase
 {
 	GENERATED_BODY()
+
+protected:
+	UPROPERTY(EditAnywhere, Category="Horace Adventure")
+	FTransform SpawnTransform;
+
+public:
+	FORCEINLINE void SetSpawnTransform(const FTransform& Transform) { SpawnTransform = Transform; }
 	
 };
