@@ -27,6 +27,13 @@ void AHA_Horace::BeginPlay()
 {
 	Super::BeginPlay();
 	SetNextSpawnLocation(GetActorTransform());
+
+	FOnTimelineFloat DeathProgressUpdate;
+	DeathProgressUpdate.BindUFunction(this, "DeathMovingUpdate");
+
+	checkf(DeathMovingCurve, TEXT("Death moving curve not defined"));
+	DeathMovingTimeline.SetLooping(false);
+	DeathMovingTimeline.AddInterpFloat(DeathMovingCurve, DeathProgressUpdate);
 }
 
 AHA_PlayerController* AHA_Horace::GetHoraceController()
@@ -44,7 +51,8 @@ void AHA_Horace::AdjustHitPoints(const int32 HitPointsModifier)
 	if (HitPoints == EHP_Dead)
 	{
 		// Destroy actor
-		Destroy();
+		PlayerDies();
+		return;
 	}
 	
 	// 2 - Change the material
@@ -105,14 +113,54 @@ void AHA_Horace::DestroyActorFX()
 	UFunctionsLibrary::PlaySoundFx(this, DieSound);
 	UFunctionsLibrary::PlayInteractFx(this, nullptr, DieEffect, GetActorLocation(), FVector(3.f));
 	GetMovementComponent()->Deactivate();
-	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::Type::NoCollision);
+	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	if (DieAnimation) GetMesh()->PlayAnimation(DieAnimation, false);
+}
+
+void AHA_Horace::DestroyHorace()
+{
+	Destroy();
 }
 
 void AHA_Horace::PlayerDies()
 {
 	DestroyActorFX();
 	PlayerStartsDeathSequence.Broadcast();
-	FTransform StartDeathTransform = GetActorTransform();
+	StartDeathTransform = GetActorTransform();
 	GetMesh()->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	DeathStartTimeline();
+}
+
+void AHA_Horace::DeathTickTimeline()
+{
+	if (DeathMovingTimeline.IsPlaying())
+	{
+		DeathMovingTimeline.TickTimeline(DeathTimeLineTickTime);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(DeathTimeLineTimerHandle);
+		
+		FTimerHandle DoOnceTimer;
+		GetWorldTimerManager().SetTimer(DoOnceTimer, this, &AHA_Horace::DestroyHorace, 2.5f, true, 0.0f);
+	}
+}
+
+void AHA_Horace::DeathMovingUpdate(float Alpha)
+{
+	FVector Location = StartDeathTransform.GetLocation();
+	Location.Z += Alpha;
+	GetMesh()->SetRelativeLocationAndRotation(Location, FRotator::ZeroRotator);
+}
+
+void AHA_Horace::DeathStartMoving()
+{
+	DeathMovingTimeline.SetPlayRate(DeathTimeLinePlayRate);
+	DeathMovingTimeline.PlayFromStart();
+}
+
+void AHA_Horace::DeathStartTimeline()
+{
+	DeathStartMoving();
+	GetWorldTimerManager().SetTimer(DeathTimeLineTimerHandle, this, &AHA_Horace::DeathTickTimeline, DeathTimeLineTickTime, true, 0.0f);
 }

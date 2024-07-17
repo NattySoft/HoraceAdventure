@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Characters/HA_BaseCharacter.h"
+#include "Components/TimelineComponent.h"
 #include "HoraceAdventure/HoraceAdventure.h"
 #include "HA_Horace.generated.h"
 
@@ -79,9 +80,32 @@ protected:
 
 	// Broadcast the death sequence to listeners
 	FPlayerStartsDeathSequence PlayerStartsDeathSequence;
+	FTransform StartDeathTransform;
+	
+	// ######### Death timeline ##########
+	UPROPERTY(EditAnywhere, Category="Horace|Death Timelines")
+	UCurveFloat* DeathMovingCurve = nullptr;
+
+	float DeathTimeLineTickTime = 0.01f;
+	float DeathTimeLinePlayRate = 1.f;
+	
+	FTimeline DeathMovingTimeline;
+	FTimerHandle DeathTimeLineTimerHandle;
+	
+	UFUNCTION()
+	void DeathTickTimeline();
+	
+	UFUNCTION()
+	void DeathMovingUpdate(float Alpha);
+	void DeathStartMoving();
+	void DeathStartTimeline();
+	// ######### END Death timeline ##########
 	
 private:
 	void DestroyActorFX();
+
+	UFUNCTION()
+	void DestroyHorace();
 	
 public:
 	FORCEINLINE int32 GetHitPoints() const { return HitPoints; }
