@@ -6,6 +6,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "HA_GameModeBase.generated.h"
 
+class AHA_Horace;
 /**
  * 
  */
@@ -15,8 +16,20 @@ class HORACEADVENTURE_API AHA_GameModeBase : public AGameModeBase
 	GENERATED_BODY()
 
 protected:
+	virtual void BeginPlay() override;
+
+	UFUNCTION()
+	void OnHoraceDestroyed(AActor* DestroyedActor);
+	
 	UPROPERTY(EditAnywhere, Category="Horace Adventure")
 	FTransform SpawnTransform;
+
+	UPROPERTY(EditDefaultsOnly, Category="Horace Adventure")
+	TSubclassOf<AHA_Horace> HoraceClass;
+	
+private:
+	UPROPERTY()
+	AHA_Horace* Horace;
 
 public:
 	FORCEINLINE void SetSpawnTransform(const FTransform& Transform) { SpawnTransform = Transform; }

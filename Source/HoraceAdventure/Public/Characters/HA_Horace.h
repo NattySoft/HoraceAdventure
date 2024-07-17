@@ -43,7 +43,7 @@ protected:
 	TArray<UMaterialInstance*> HitMaterials;
 
 	UPROPERTY(EditAnywhere, Category="Player Apparence")
-	FVector RespawnSize;
+	FVector RespawnSize = FVector(.75f);
 
 
 	
@@ -76,10 +76,11 @@ public:
 	FORCEINLINE void SetHasFireFlower(const bool InValue) { bHasFireFlower = InValue; }
 	FORCEINLINE FVector GetPlayerScaleSmall() const { return PlayerScaleSmall; }
 	FORCEINLINE void SetOverlappingPipe(AHA_WarpPipe* Pipe) { OverlappingPipe = Pipe; }
+	FORCEINLINE FVector GetRespawnSize() const { return RespawnSize; }
 	
 	AHA_PlayerController* GetHoraceController();
 	void AdjustHitPoints(const int32 HitPointsModifier);
-	void GotFlowerPower();
+	void GotFlowerPower() const;
 	
 	UFUNCTION(BlueprintCallable)
 	void ShootFireBall();

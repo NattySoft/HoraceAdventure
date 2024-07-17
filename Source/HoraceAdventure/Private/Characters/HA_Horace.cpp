@@ -18,7 +18,6 @@ AHA_Horace::AHA_Horace()
 	FireBallComponent = CreateDefaultSubobject<UHA_FireBallComponent>("FireBallComponent");
 
 	FireBallSpawnPoint->SetupAttachment(GetMesh());
-	RespawnSize = FVector(.75f);
 }
 
 void AHA_Horace::BeginPlay()
@@ -68,7 +67,7 @@ void AHA_Horace::AdjustHitPoints(const int32 HitPointsModifier)
 	}
 }
 
-void AHA_Horace::GotFlowerPower()
+void AHA_Horace::GotFlowerPower() const
 {
 	if (GrowingComponent)
 	{
