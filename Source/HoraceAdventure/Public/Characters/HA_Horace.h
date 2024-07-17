@@ -31,6 +31,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Horace|Components")
 	UArrowComponent* FireBallSpawnPoint;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Horace|Components")
+	UArrowComponent* FlagAttachPoint;
 	
 	UPROPERTY(EditAnywhere, Category="Horace|Components")
 	UHA_GrowingComponent* GrowingComponent;

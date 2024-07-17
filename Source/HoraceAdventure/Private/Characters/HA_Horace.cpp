@@ -17,10 +17,14 @@
 AHA_Horace::AHA_Horace()
 {
 	FireBallSpawnPoint = CreateDefaultSubobject<UArrowComponent>("FireBallSpawnPoint");
+	FlagAttachPoint = CreateDefaultSubobject<UArrowComponent>("FlagAttachPoint");
 	GrowingComponent = CreateDefaultSubobject<UHA_GrowingComponent>("GrowingComponent");
 	FireBallComponent = CreateDefaultSubobject<UHA_FireBallComponent>("FireBallComponent");
 
 	FireBallSpawnPoint->SetupAttachment(GetMesh());
+	FlagAttachPoint->SetupAttachment(GetRootComponent());
+
+	FlagAttachPoint->SetRelativeLocation(FVector(40.f, 0.f, -65.f));
 }
 
 void AHA_Horace::BeginPlay()
