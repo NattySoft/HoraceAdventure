@@ -24,5 +24,8 @@ public:
 
 	UFUNCTION(Category="Horace|Libraries")
 	static AHA_Horace* GetHorace(AActor* FromActor = nullptr);
+
+	UFUNCTION(Category="Horace|Libraries")
+	static void PrintDebugMessage(const FString& DebugMessage, int32 Key = -1, float TimeToDisplay = 3.f, FColor DisplayColor = FColor::Green, bool bNewerOnTop = true, const FVector2D& TextScale = FVector2D::UnitVector);
 	
 };

@@ -3,6 +3,7 @@
 
 #include "Characters/HA_Horace.h"
 
+#include "Actors/Pipes/HA_WarpPipe.h"
 #include "ActorsComponents/HA_FireBallComponent.h"
 #include "ActorsComponents/HA_GrowingComponent.h"
 #include "Components/ArrowComponent.h"
@@ -73,4 +74,10 @@ void AHA_Horace::ShootFireBall()
 	if (!FireBallComponent) return;
 	FTransform Transform = FireBallSpawnPoint->GetComponentTransform();
 	FireBallComponent->ShootFireBall(Transform);
+}
+
+void AHA_Horace::InteractWithPipe()
+{
+	if (!OverlappingPipe) return;
+	OverlappingPipe->Interact(this);
 }

@@ -32,3 +32,9 @@ AHA_Horace* UFunctionsLibrary::GetHorace(AActor* FromActor)
 	if (!IsValid(FromActor)) return nullptr;
 	return Cast<AHA_Horace>(FromActor);
 }
+
+void UFunctionsLibrary::PrintDebugMessage(const FString& DebugMessage, int32 Key, float TimeToDisplay, FColor DisplayColor, bool bNewerOnTop, const FVector2D& TextScale)
+{
+	if (!GEngine) return;
+	GEngine->AddOnScreenDebugMessage(Key, TimeToDisplay, DisplayColor, DebugMessage);
+}
