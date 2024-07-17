@@ -115,6 +115,7 @@ void AHA_Horace::DestroyActorFX()
 	GetMovementComponent()->Deactivate();
 	GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 	if (DieAnimation) GetMesh()->PlayAnimation(DieAnimation, false);
+	if (GetHoraceController()) GetHoraceController()->AddLife(-1);
 }
 
 void AHA_Horace::DestroyHorace()
@@ -146,7 +147,7 @@ void AHA_Horace::DeathTickTimeline()
 	}
 }
 
-void AHA_Horace::DeathMovingUpdate(float Alpha)
+void AHA_Horace::DeathMovingUpdate(const float Alpha) const
 {
 	FVector Location = StartDeathTransform.GetLocation();
 	Location.Z += Alpha;

@@ -32,6 +32,7 @@ protected:
 	
 	UPROPERTY(EditAnywhere, Category="Gameplay")
 	int32 Lives = 3;
+	int32 MaxLives = 100;
 
 	UPROPERTY(EditAnywhere, Category="Gameplay")
 	int32 Points = 0;
@@ -55,6 +56,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	AHA_HUD* GetHoraceHUD();
+
+	FORCEINLINE int32 GetLives() const { return Lives; }
 	
 	void AddCoin(const int32 InValue);
 	void AddLife(const int32 InValue);

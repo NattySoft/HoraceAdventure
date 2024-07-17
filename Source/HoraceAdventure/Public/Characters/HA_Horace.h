@@ -93,7 +93,7 @@ protected:
 	void DeathTickTimeline();
 	
 	UFUNCTION()
-	void DeathMovingUpdate(float Alpha);
+	void DeathMovingUpdate(float Alpha) const;
 	void DeathStartMoving();
 	void DeathStartTimeline();
 	// ######### END Death timeline ##########

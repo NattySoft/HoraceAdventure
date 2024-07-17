@@ -38,18 +38,23 @@ void AHA_PlayerController::AddCoin(const int32 InValue)
 	}
 
 	OnCoinChangesDelegate.Broadcast(Coins);
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Coins: %d"), Coins));
 }
 
 void AHA_PlayerController::AddLife(const int32 InValue)
 {
 	Lives += InValue;
-	if (LivesUpSound)
+	Lives = FMath::Clamp(Lives, 0, MaxLives);
+	OnLivesChangesDelegate.Broadcast(Lives);
+	
+	if (LivesUpSound && InValue > 0)
 	{
 		UGameplayStatics::PlaySound2D(this, LivesUpSound);
 	}
-	OnLivesChangesDelegate.Broadcast(Lives);
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, FString::Printf(TEXT("Lives: %d"), Lives));
+	
+	if (Lives == 0)
+	{
+		UGameplayStatics::OpenLevel(GetWorld(), "LV_MainMenu");
+	}
 }
 
 void AHA_PlayerController::AddPoints(const int32 InPoints)

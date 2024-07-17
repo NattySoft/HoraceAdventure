@@ -4,6 +4,7 @@
 #include "Core/HA_GameModeBase.h"
 
 #include "Characters/HA_Horace.h"
+#include "Controllers/HA_PlayerController.h"
 #include "Kismet/GameplayStatics.h"
 
 void AHA_GameModeBase::BeginPlay()
@@ -19,6 +20,10 @@ void AHA_GameModeBase::BeginPlay()
 
 void AHA_GameModeBase::OnHoraceDestroyed(AActor* DestroyedActor)
 {
+	AHA_PlayerController* HoraceController = Cast<AHA_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	if (!HoraceController) return;
+	if (HoraceController->GetLives() <= 0) return;
+	
 	FActorSpawnParameters SpawnParameters;		
 	Horace = GetWorld()->SpawnActorDeferred<AHA_Horace>(HoraceClass, FTransform::Identity);
 	if (Horace)
