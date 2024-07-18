@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "HA_LevelSettings.generated.h"
 
+class AHA_PlayerController;
+class AHA_GameModeBase;
+
 UCLASS()
 class HORACEADVENTURE_API AHA_LevelSettings : public AActor
 {
@@ -15,6 +18,8 @@ public:
 	AHA_LevelSettings();
 
 protected:
+	virtual void BeginPlay() override;
+	
 	UPROPERTY(EditAnywhere, Category="LevelSettings|Sounds")
 	UAudioComponent* LevelMusicComponent;
 
@@ -41,4 +46,14 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
 	USoundBase* CurrentLevelMusic;
+
+private:
+	UPROPERTY()
+	AHA_GameModeBase* GameMode;
+
+	UPROPERTY()
+	AHA_PlayerController* PlayerController;
+	
+	void PlayerRespawned();
+	void ResetLevelTime();
 };

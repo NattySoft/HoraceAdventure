@@ -24,6 +24,11 @@ void AHA_GameModeBase::OnHoraceDestroyed(AActor* DestroyedActor)
 	if (!HoraceController) return;
 	if (HoraceController->GetLives() <= 0) return;
 	
+	Respawn();
+}
+
+void AHA_GameModeBase::Respawn()
+{
 	FActorSpawnParameters SpawnParameters;		
 	Horace = GetWorld()->SpawnActorDeferred<AHA_Horace>(HoraceClass, FTransform::Identity);
 	if (Horace)
@@ -31,5 +36,8 @@ void AHA_GameModeBase::OnHoraceDestroyed(AActor* DestroyedActor)
 		Horace = Cast<AHA_Horace>(UGameplayStatics::FinishSpawningActor(Horace, SpawnTransform));
 		UGameplayStatics::GetPlayerController(GetWorld(), 0)->Possess(Horace);
 		Horace->OnDestroyed.AddDynamic(this, &AHA_GameModeBase::OnHoraceDestroyed);
+
+		//Broadcast the respawn
+		PlayerRespawned.Broadcast();
 	}
 }

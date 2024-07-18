@@ -66,3 +66,9 @@ void AHA_PlayerController::AddPoints(const int32 InPoints)
 	}
 	OnPointsChangesDelegate.Broadcast(Points);
 }
+
+void AHA_PlayerController::SetLevelTime(const int32 InValue)
+{
+	LevelTime = InValue;
+	OnTimeChangesDelegate.Broadcast(LevelTime);
+}

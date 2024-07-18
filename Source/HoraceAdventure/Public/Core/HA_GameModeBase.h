@@ -7,9 +7,9 @@
 #include "HA_GameModeBase.generated.h"
 
 class AHA_Horace;
-/**
- * 
- */
+
+DECLARE_MULTICAST_DELEGATE(FPlayerRespawned);
+
 UCLASS()
 class HORACEADVENTURE_API AHA_GameModeBase : public AGameModeBase
 {
@@ -20,6 +20,7 @@ protected:
 
 	UFUNCTION()
 	void OnHoraceDestroyed(AActor* DestroyedActor);
+	void Respawn();
 	
 	UPROPERTY(EditAnywhere, Category="Horace Adventure")
 	FTransform SpawnTransform;
@@ -30,8 +31,10 @@ protected:
 private:
 	UPROPERTY()
 	AHA_Horace* Horace;
-
+	
 public:
+	FPlayerRespawned PlayerRespawned;
+	
 	FORCEINLINE void SetSpawnTransform(const FTransform& Transform) { SpawnTransform = Transform; }
 	
 };

@@ -63,4 +63,5 @@ public:
 	void AddCoin(const int32 InValue);
 	void AddLife(const int32 InValue);
 	void AddPoints(const int32 InPoints);
+	void SetLevelTime(const int32 InValue);
 };
