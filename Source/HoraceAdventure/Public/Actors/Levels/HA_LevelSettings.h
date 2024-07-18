@@ -36,7 +36,7 @@ protected:
 	int32 TimeLimitCurrent = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
-	int32 TimeLimitMax = 0;
+	int32 TimeLimitMax = 300;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
 	int32 TimeRunningOutWarning = 50;
@@ -53,7 +53,14 @@ private:
 
 	UPROPERTY()
 	AHA_PlayerController* PlayerController;
+
+	FTimerHandle LevelTimer;
 	
 	void PlayerRespawned();
 	void ResetLevelTime();
+	void SetAudioToPlay() const;
+
+	UFUNCTION()
+	void StartLevelTimer();
+	void RunLevelTimer();
 };

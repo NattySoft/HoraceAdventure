@@ -3,10 +3,13 @@
 
 #include "Actors/Levels/HA_LevelSettings.h"
 
+#include "Characters/HA_Horace.h"
 #include "Components/AudioComponent.h"
 #include "Controllers/HA_PlayerController.h"
 #include "Core/HA_GameModeBase.h"
+#include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+#include "Libraries/FunctionsLibrary.h"
 
 AHA_LevelSettings::AHA_LevelSettings()
 {
@@ -35,6 +38,7 @@ void AHA_LevelSettings::BeginPlay()
 	
 	PlayerRespawned();
 	ResetLevelTime();
+	SetAudioToPlay();
 }
 
 void AHA_LevelSettings::PlayerRespawned()
@@ -50,4 +54,40 @@ void AHA_LevelSettings::ResetLevelTime()
 {
 	PlayerController->SetLevelTime(TimeLimitMax);
 	TimeLimitCurrent = TimeLimitMax;
+}
+
+void AHA_LevelSettings::SetAudioToPlay() const
+{
+	if (!CurrentLevelMusic) return;
+	LevelMusicComponent->SetSound(CurrentLevelMusic);
+	DELAY(0.75, [this]()
+	{
+		LevelMusicComponent->Play();
+	});
+}
+
+void AHA_LevelSettings::StartLevelTimer()
+{
+	GetWorldTimerManager().SetTimer(LevelTimer, this, &AHA_LevelSettings::RunLevelTimer, TimePlayRate, true);
+}
+
+void AHA_LevelSettings::RunLevelTimer()
+{
+	if (TimeLimitCurrent == 0)
+	{
+		LevelTimer.Invalidate();
+		LevelMusicComponent->Stop();
+		TimeRunningOutWarningComponent->Stop();
+		AHA_Horace* Horace = UFunctionsLibrary::GetHorace(UGameplayStatics::GetPlayerCharacter(this, 0));
+		if (Horace) Horace->PlayerDies();
+		return;
+	}
+	TimeLimitCurrent--;
+	PlayerController->SetLevelTime(TimeLimitCurrent);
+
+	if (TimeLimitCurrent == TimeRunningOutWarning)
+	{
+		LevelMusicComponent->SetPaused(true);
+		TimeRunningOutWarningComponent->Play();
+	}
 }
