@@ -7,6 +7,7 @@
 #include "HoraceAdventure/HoraceAdventure.h"
 #include "HA_Block_P.generated.h"
 
+class AHA_LevelSettings;
 class AHA_Horace;
 class UBoxComponent;
 class UCameraShakeBase;
@@ -28,47 +29,50 @@ protected:
 	UFUNCTION()
 	void OnBoxComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	USceneComponent* DefaultSceneRoot;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* Plane;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* Box;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* BlockBaseSmashed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UStaticMeshComponent* BlockTopSmashed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UBoxComponent* BoxSmashed;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UAudioComponent* Music;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	FName Tag = PBlockTag;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	TArray<AActor*> Blocks;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float BlockTimeDuration = 8.f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	USoundBase* CharacterLaunchSound;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UParticleSystem* CharacterLaunchEffect;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UCameraShakeBase> CharacterLaunchShake;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditDefaultsOnly)
 	UForceFeedbackEffect* CharacterForceFeedbackEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HA Block P")
+	float BlockTimeDuration = 8.f;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HA Block P")
+	AHA_LevelSettings* LevelSettings;
 	
 private:
 	void PlayEffects(AHA_Horace* Horace) const;

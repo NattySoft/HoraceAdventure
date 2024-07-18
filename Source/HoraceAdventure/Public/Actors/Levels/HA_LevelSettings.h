@@ -70,5 +70,6 @@ private:
 	void RestartMusic();
 	void StopAnyMusicAndTimer();
 
-	
+public:
+	FORCEINLINE UAudioComponent* GetLevelMusicComponent() const { return LevelMusicComponent; }
 };

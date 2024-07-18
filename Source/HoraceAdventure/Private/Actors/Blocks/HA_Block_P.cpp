@@ -4,6 +4,7 @@
 #include "Actors/Blocks/HA_Block_P.h"
 
 #include "Actors/Blocks/HA_Block_Base.h"
+#include "Actors/Levels/HA_LevelSettings.h"
 #include "Characters/HA_Horace.h"
 #include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
@@ -51,8 +52,9 @@ AHA_Block_P::AHA_Block_P()
 
 void AHA_Block_P::BeginPlay()
 {
-	Super::BeginPlay();
+	checkf(LevelSettings, TEXT("AHA_Block_P::BeginPlay LevelSettings has not been selected in the level"));
 
+	Super::BeginPlay();
 	Box->OnComponentHit.AddDynamic(this, &AHA_Block_P::OnBoxComponentHit);
 }
 
@@ -91,6 +93,10 @@ void AHA_Block_P::PlayEffects(AHA_Horace* Horace) const
 		);
 	}
 	Music->Play();
+	if (LevelSettings)
+	{
+		LevelSettings->GetLevelMusicComponent()->SetPaused(true);
+	}
 }
 
 void AHA_Block_P::PlayCameraShakeAndForceFeedback(AHA_Horace* Horace) const
@@ -127,4 +133,8 @@ void AHA_Block_P::DeactivateAllPBlocksOnTimerOver()
 		BlockBase->PBlockOff();
 	}
 	Music->Stop();
+	if (LevelSettings)
+	{
+		LevelSettings->GetLevelMusicComponent()->SetPaused(false);
+	}
 }
