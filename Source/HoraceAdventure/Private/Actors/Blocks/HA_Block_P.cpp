@@ -4,6 +4,7 @@
 #include "Actors/Blocks/HA_Block_P.h"
 
 #include "Actors/Blocks/HA_Block_Base.h"
+#include "Actors/CheckPoints/HA_EndOfLevelFlag.h"
 #include "Actors/Levels/HA_LevelSettings.h"
 #include "Characters/HA_Horace.h"
 #include "Components/AudioComponent.h"
@@ -53,9 +54,15 @@ AHA_Block_P::AHA_Block_P()
 void AHA_Block_P::BeginPlay()
 {
 	checkf(LevelSettings, TEXT("AHA_Block_P::BeginPlay LevelSettings has not been selected in the level"));
+	checkf(EndOfLevelFlag, TEXT("AHA_Block_P::BeginPlay EndOfLevelFlag has not been selected in the level"));
 
 	Super::BeginPlay();
 	Box->OnComponentHit.AddDynamic(this, &AHA_Block_P::OnBoxComponentHit);
+
+	EndOfLevelFlag->LevelCompleteDelegate.AddLambda([this]()
+	{
+		DeactivateAllPBlocksOnTimerOver();
+	});
 }
 
 void AHA_Block_P::OnBoxComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,

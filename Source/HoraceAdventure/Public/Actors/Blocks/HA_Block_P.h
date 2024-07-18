@@ -7,6 +7,7 @@
 #include "HoraceAdventure/HoraceAdventure.h"
 #include "HA_Block_P.generated.h"
 
+class AHA_EndOfLevelFlag;
 class AHA_LevelSettings;
 class AHA_Horace;
 class UBoxComponent;
@@ -73,7 +74,10 @@ protected:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HA Block P")
 	AHA_LevelSettings* LevelSettings;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="HA Block P")
+	AHA_EndOfLevelFlag* EndOfLevelFlag;
+
 private:
 	void PlayEffects(AHA_Horace* Horace) const;
 	void PlayCameraShakeAndForceFeedback(AHA_Horace* Horace) const;
