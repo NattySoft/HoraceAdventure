@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/TimelineComponent.h"
 #include "GameFramework/Actor.h"
 #include "HA_EndOfLevelFlag.generated.h"
 
@@ -68,7 +69,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
 	UAnimationAsset* PlayerGrabPoleAnimation;
-	
+
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	USoundBase* FlagPoleSound;
 
 	UPROPERTY()
 	AHA_Horace* Horace;
@@ -84,6 +87,26 @@ protected:
 	int32 FireworkPoints = 500;
 	UPROPERTY(EditAnywhere, Category="EndOfLevelFlag")
 	int32 FireworkShowSpecialNumber = 7;
+
+
+	// ######### Pole timeline ##########
+	UPROPERTY(EditAnywhere, Category="EndOfLevelFlag")
+	UCurveFloat* PoleMovingCurve = nullptr;
+
+	float PoleTimeLineTickTime = 0.01f;
+	float PoleTimeLinePlayRate = 1.f;
+	
+	FTimeline PoleMovingTimeline;
+	FTimerHandle PoleTimeLineTimerHandle;
+	
+	UFUNCTION()
+	void PoleTickTimeline();
+	
+	UFUNCTION()
+	void PoleMovingUpdate(float Alpha) const;
+	void PoleStartMoving();
+	void PoleStartTimeline();
+	// ######### END Pole timeline ##########
 	
 private:
 	bool bTriggerVolumeBeginOverlapped = false;
@@ -93,5 +116,11 @@ public:
 
 	void SetFlagStartLocation();
 	void SetPlayerPositionAndPlayAnim() const;
+
+	UFUNCTION()
+	void StartAnimationsAndEffects();
+	
+	void AnimateCharacterDownThePole();
+	void AnimateFlagDownThePole();
 	
 };

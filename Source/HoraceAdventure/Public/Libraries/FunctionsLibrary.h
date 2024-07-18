@@ -14,10 +14,10 @@ UCLASS()
 class HORACEADVENTURE_API UFunctionsLibrary : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
-
+	
 public:
 	UFUNCTION(Category="Horace|Libraries", meta=(DefaultToSelf = "WorldContextObject"))
-	static void PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX);
+	static void PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX, float Delay = 0.f);
 
 	UFUNCTION(Category="Horace|Libraries", meta=(DefaultToSelf = "WorldContextObject"))
 	static void PlayInteractFx(const UObject* WorldContextObject, UNiagaraSystem* VFX_Niagara,

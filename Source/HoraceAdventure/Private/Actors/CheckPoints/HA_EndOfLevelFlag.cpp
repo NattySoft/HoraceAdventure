@@ -47,11 +47,13 @@ AHA_EndOfLevelFlag::AHA_EndOfLevelFlag()
 	
 	FlagPole->SetRelativeLocation(FVector(0.f, 0.f, 500.f));
 	FlagPole->SetRelativeScale3D(FVector(.2f, .2f, 8.f));
-
+	FlagPole->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+	
 	FlagBase->SetRelativeLocation(FVector(0.f, 0.f, 50.f));
 	
 	FlagTop->SetRelativeLocation(FVector(0.f, 0.f, 895.f));
 	FlagTop->SetRelativeScale3D(FVector(.5f));
+	FlagTop->SetCollisionEnabled(ECollisionEnabled::NoCollision);
 
 	FlagEndPoint->SetRelativeLocation(FVector(85.f, 0.f, 150.f));
 	FlagEndPoint->SetRelativeRotation(FRotator(0.f, 0.f, 90.f));
@@ -65,7 +67,7 @@ AHA_EndOfLevelFlag::AHA_EndOfLevelFlag()
 	PlayerExplodePoint->SetRelativeLocation(FVector(850.f, 0.f, 500.f));
 	PlayerStartPoint->SetRelativeLocation(FVector(-25.f, 30.f, 845.f));
 
-	TriggerVolume->SetRelativeLocation(FVector(5.f, 0.f, 1000.f));
+	TriggerVolume->SetRelativeLocation(FVector(30.f, 0.f, 1000.f));
 	TriggerVolume->SetBoxExtent(FVector(32.f, 200.f, 1000.f));
 	TriggerVolume->SetCollisionResponseToAllChannels(ECR_Ignore);
 	TriggerVolume->SetCollisionResponseToChannel(ECC_Pawn, ECR_Block);
@@ -78,8 +80,43 @@ void AHA_EndOfLevelFlag::BeginPlay()
 	HoraceController = Cast<AHA_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	checkf(HoraceController, TEXT("%hs HoraceController missing"), __FUNCTION__);
 
+	// FOnTimelineFloat PoleProgressUpdate;
+	// PoleProgressUpdate.BindUFunction(this, "PoleMovingUpdate");
+	// checkf(PoleMovingCurve, TEXT("Pole moving curve not defined"));
+	// PoleMovingTimeline.SetLooping(false);
+	// PoleMovingTimeline.AddInterpFloat(PoleMovingCurve, PoleProgressUpdate);
+
+	
 	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AHA_EndOfLevelFlag::OnTriggerVolumeBeginOverlap);
 	
+}
+
+void AHA_EndOfLevelFlag::PoleTickTimeline()
+{
+	if (PoleMovingTimeline.IsPlaying())
+	{
+		PoleMovingTimeline.TickTimeline(PoleTimeLineTickTime);
+	}
+	else
+	{
+		GetWorldTimerManager().ClearTimer(PoleTimeLineTimerHandle);
+	}
+}
+
+void AHA_EndOfLevelFlag::PoleMovingUpdate(float Alpha) const
+{
+}
+
+void AHA_EndOfLevelFlag::PoleStartMoving()
+{
+	PoleMovingTimeline.SetPlayRate(PoleTimeLinePlayRate);
+	PoleMovingTimeline.PlayFromStart();
+}
+
+void AHA_EndOfLevelFlag::PoleStartTimeline()
+{
+	PoleStartMoving();
+	GetWorldTimerManager().SetTimer(PoleTimeLineTimerHandle, this, &AHA_EndOfLevelFlag::PoleTickTimeline, PoleTimeLineTickTime, true, 0.0f);
 }
 
 void AHA_EndOfLevelFlag::SetFlagStartLocation()
@@ -116,6 +153,43 @@ void AHA_EndOfLevelFlag::SetPlayerPositionAndPlayAnim() const
 	}
 }
 
+void AHA_EndOfLevelFlag::AnimateCharacterDownThePole()
+{
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = Horace;
+	const FVector ToLocation = PlayerEndPoint->GetComponentLocation();
+	UKismetSystemLibrary::MoveComponentTo(
+		Horace->GetCapsuleComponent(),
+		ToLocation,
+		PlayerEndPoint->GetComponentRotation(),
+		false, false, 1.f, false,
+		EMoveComponentAction::Move,
+		LatentInfo
+	);
+}
+
+void AHA_EndOfLevelFlag::AnimateFlagDownThePole()
+{
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = Flag;
+	const FVector ToLocation = FlagEndPoint->GetRelativeLocation();
+	UKismetSystemLibrary::MoveComponentTo(
+		Flag,
+		ToLocation,
+		FlagEndPoint->GetRelativeRotation(),
+		false, false, 1.f, false,
+		EMoveComponentAction::Move,
+		LatentInfo
+	);
+}
+
+void AHA_EndOfLevelFlag::StartAnimationsAndEffects()
+{
+	UFunctionsLibrary::PlaySoundFx(GetWorld(), FlagPoleSound);
+	AnimateCharacterDownThePole();
+	AnimateFlagDownThePole();
+}
+
 void AHA_EndOfLevelFlag::OnTriggerVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
@@ -131,4 +205,7 @@ void AHA_EndOfLevelFlag::OnTriggerVolumeBeginOverlap(UPrimitiveComponent* Overla
 
 	SetFlagStartLocation();
 	SetPlayerPositionAndPlayAnim();
+
+	FTimerHandle FxHandler;
+	GetWorldTimerManager().SetTimer(FxHandler, this, &AHA_EndOfLevelFlag::StartAnimationsAndEffects, 1.f);
 }
