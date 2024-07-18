@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "HA_LevelSettings.generated.h"
 
+class AHA_EndOfLevelFlag;
 class AHA_PlayerController;
 class AHA_GameModeBase;
 
@@ -47,6 +48,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
 	USoundBase* CurrentLevelMusic;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
+	USoundBase* LevelCompleteSound;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
+	AHA_EndOfLevelFlag* EndOfLevelFlag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
+	int32 LevelTimeAwardPoints = 50;
+	
 private:
 	UPROPERTY()
 	AHA_GameModeBase* GameMode;
@@ -70,6 +80,13 @@ private:
 	void RestartMusic();
 	void StopAnyMusicAndTimer();
 
+	void CheckEndOfLevelCompleted();
+
+	UFUNCTION()
+	void StartDecrementLevelTime();
+	UFUNCTION()
+	void DecrementLevelTimeUpdate();
+	
 public:
 	FORCEINLINE UAudioComponent* GetLevelMusicComponent() const { return LevelMusicComponent; }
 };

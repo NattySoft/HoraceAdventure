@@ -82,43 +82,8 @@ void AHA_EndOfLevelFlag::BeginPlay()
 	HoraceController = Cast<AHA_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	checkf(HoraceController, TEXT("%hs HoraceController missing"), __FUNCTION__);
 
-	// FOnTimelineFloat PoleProgressUpdate;
-	// PoleProgressUpdate.BindUFunction(this, "PoleMovingUpdate");
-	// checkf(PoleMovingCurve, TEXT("Pole moving curve not defined"));
-	// PoleMovingTimeline.SetLooping(false);
-	// PoleMovingTimeline.AddInterpFloat(PoleMovingCurve, PoleProgressUpdate);
-
-	
 	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AHA_EndOfLevelFlag::OnTriggerVolumeBeginOverlap);
 	
-}
-
-void AHA_EndOfLevelFlag::PoleTickTimeline()
-{
-	if (PoleMovingTimeline.IsPlaying())
-	{
-		PoleMovingTimeline.TickTimeline(PoleTimeLineTickTime);
-	}
-	else
-	{
-		GetWorldTimerManager().ClearTimer(PoleTimeLineTimerHandle);
-	}
-}
-
-void AHA_EndOfLevelFlag::PoleMovingUpdate(float Alpha) const
-{
-}
-
-void AHA_EndOfLevelFlag::PoleStartMoving()
-{
-	PoleMovingTimeline.SetPlayRate(PoleTimeLinePlayRate);
-	PoleMovingTimeline.PlayFromStart();
-}
-
-void AHA_EndOfLevelFlag::PoleStartTimeline()
-{
-	PoleStartMoving();
-	GetWorldTimerManager().SetTimer(PoleTimeLineTimerHandle, this, &AHA_EndOfLevelFlag::PoleTickTimeline, PoleTimeLineTickTime, true, 0.0f);
 }
 
 void AHA_EndOfLevelFlag::SetFlagStartLocation()
@@ -129,7 +94,7 @@ void AHA_EndOfLevelFlag::SetFlagStartLocation()
 	if (FlagAttachLocation.Z > FlagLocation.Z)
 	{
 		FlagStartPoint = FlagLocation;
-		// Reset the player if he jump over the flag pole
+		// Reset the player if he jumps over the flag pole
 		Horace->GetCapsuleComponent()->SetWorldLocation(PlayerStartPoint->GetComponentLocation());
 	}
 	else
@@ -236,9 +201,9 @@ void AHA_EndOfLevelFlag::PlayAllFireworks()
 	// Check if the last digit of time remaining = "Fireworks Show #"
 	if (FireworkShowSpecialNumberString.Equals(RightLevelTime))
 	{
-		for (int i = 0; i < FireworkShowSpecialNumber; ++i)
+		float TimerTime = 0.f;
+		for (int i = 0; i < FireworkShowSpecialNumber; i++)
 		{
-			float TimerTime = 0.f;
 			constexpr float BaseTimerTime = .5f;
 			FTimerHandle FireworkTimer;
 			TimerTime = i == 0 ? BaseTimerTime : TimerTime + BaseTimerTime;

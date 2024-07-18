@@ -3,6 +3,7 @@
 
 #include "Actors/Levels/HA_LevelSettings.h"
 
+#include "Actors/CheckPoints/HA_EndOfLevelFlag.h"
 #include "Characters/HA_Horace.h"
 #include "Components/AudioComponent.h"
 #include "Controllers/HA_PlayerController.h"
@@ -28,6 +29,8 @@ AHA_LevelSettings::AHA_LevelSettings()
 
 void AHA_LevelSettings::BeginPlay()
 {
+	checkf(EndOfLevelFlag, TEXT("AHA_LevelSettings::BeginPlay EndOfLevelFlag has not been selected in the level"));
+	
 	Super::BeginPlay();
 
 	GameMode = Cast<AHA_GameModeBase>(UGameplayStatics::GetGameMode(this));
@@ -45,7 +48,8 @@ void AHA_LevelSettings::StartGameLoop()
 	PlayerRespawned();
 	SetAudioToPlay();
 	StartLevelTimer();
-	StopAnyMusicAndTimer();	
+	StopAnyMusicAndTimer();
+	CheckEndOfLevelCompleted();
 }
 
 void AHA_LevelSettings::PlayerRespawned()
@@ -123,4 +127,39 @@ void AHA_LevelSettings::StopAnyMusicAndTimer()
 			UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(this, LevelTimer);
 		});
 	}
+}
+
+void AHA_LevelSettings::CheckEndOfLevelCompleted()
+{
+	EndOfLevelFlag->LevelCompleteDelegate.AddLambda([this]()
+	{
+		LevelMusicComponent->Stop();
+		TimeRunningOutWarningComponent->Stop();
+		UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(this, LevelTimer);
+		
+		FTimerHandle StartDecrementLevelTimer;
+		GetWorldTimerManager().SetTimer(StartDecrementLevelTimer, this, &AHA_LevelSettings::StartDecrementLevelTime, 1.f);
+	});
+}
+
+void AHA_LevelSettings::StartDecrementLevelTime()
+{
+	LevelCompleteComponent->Activate();
+	
+	const int32 LoopCount = PlayerController->GetLevelTime();
+	float TimerTime = 0.f;
+	for (int i = 0; i < LoopCount; i++)
+	{
+		constexpr float BaseTimerTime = .05f;
+		FTimerHandle DecrementLevelTimer;
+		TimerTime = i == 0 ? BaseTimerTime : TimerTime + BaseTimerTime;
+		GetWorldTimerManager().SetTimer(DecrementLevelTimer, this, &AHA_LevelSettings::DecrementLevelTimeUpdate, TimerTime);
+	}
+}
+
+void AHA_LevelSettings::DecrementLevelTimeUpdate()
+{
+	PlayerController->SetLevelTime(PlayerController->GetLevelTime() - 1);
+	PlayerController->AddPoints(LevelTimeAwardPoints);
+	UFunctionsLibrary::PlaySoundFx(this, LevelCompleteSound);
 }
