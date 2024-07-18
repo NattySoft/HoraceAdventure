@@ -117,6 +117,7 @@ public:
 	FORCEINLINE FVector GetPlayerScaleSmall() const { return PlayerScaleSmall; }
 	FORCEINLINE void SetOverlappingPipe(AHA_WarpPipe* Pipe) { OverlappingPipe = Pipe; }
 	FORCEINLINE FVector GetRespawnSize() const { return RespawnSize; }
+	FORCEINLINE UArrowComponent* GetFlagAttachPoint() const { return FlagAttachPoint; }
 	
 	AHA_PlayerController* GetHoraceController();
 	void AdjustHitPoints(const int32 HitPointsModifier);

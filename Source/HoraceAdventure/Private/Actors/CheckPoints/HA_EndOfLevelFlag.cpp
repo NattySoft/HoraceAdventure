@@ -3,9 +3,15 @@
 
 #include "Actors/CheckPoints/HA_EndOfLevelFlag.h"
 
+#include "Characters/HA_Horace.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BillboardComponent.h"
 #include "Components/BoxComponent.h"
+#include "Components/CapsuleComponent.h"
+#include "Controllers/HA_PlayerController.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Libraries/FunctionsLibrary.h"
 
 AHA_EndOfLevelFlag::AHA_EndOfLevelFlag()
 {
@@ -68,5 +74,61 @@ AHA_EndOfLevelFlag::AHA_EndOfLevelFlag()
 void AHA_EndOfLevelFlag::BeginPlay()
 {
 	Super::BeginPlay();
+
+	HoraceController = Cast<AHA_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
+	checkf(HoraceController, TEXT("%hs HoraceController missing"), __FUNCTION__);
+
+	TriggerVolume->OnComponentBeginOverlap.AddDynamic(this, &AHA_EndOfLevelFlag::OnTriggerVolumeBeginOverlap);
 	
+}
+
+void AHA_EndOfLevelFlag::SetFlagStartLocation()
+{
+	// Set the starting point for the flag
+	const FVector FlagAttachLocation = Horace->GetFlagAttachPoint()->GetComponentLocation();
+	const FVector FlagLocation = Flag->GetComponentLocation();
+	if (FlagAttachLocation.Z > FlagLocation.Z)
+	{
+		FlagStartPoint = FlagLocation;
+		// Reset the player if he jump over the flag pole
+		Horace->GetCapsuleComponent()->SetWorldLocation(PlayerStartPoint->GetComponentLocation());
+	}
+	else
+	{
+		FlagStartPoint = FVector(FlagLocation.X, FlagLocation.Y, FlagAttachLocation.Z);
+	}
+	Flag->SetWorldLocation(FlagStartPoint);
+}
+
+void AHA_EndOfLevelFlag::SetPlayerPositionAndPlayAnim() const
+{
+	// Face the character to the flag pole
+	Horace->GetCapsuleComponent()->SetWorldRotation(PlayerEndPoint->GetComponentRotation());
+	Horace->GetCapsuleComponent()->AddLocalOffset(FVector(0.f, 30.f, 0.f));
+
+	// Set Character Position and play anim
+	Horace->GetCharacterMovement()->GravityScale = 0.f;
+	Horace->GetCharacterMovement()->Deactivate();
+	if (PlayerGrabPoleAnimation)
+	{
+		Horace->GetMesh()->PlayAnimation(PlayerGrabPoleAnimation, false);
+		Horace->GetMesh()->SetPosition(1.9f, true);
+	}
+}
+
+void AHA_EndOfLevelFlag::OnTriggerVolumeBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+                                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (bTriggerVolumeBeginOverlapped) return;
+	Horace = UFunctionsLibrary::GetHorace(OtherActor);
+	if (!IsValid(Horace)) return;
+
+	bTriggerVolumeBeginOverlapped = true;
+	HoraceController->DisableInput(HoraceController);
+
+	// Dispatch the event for the level completed
+	LevelCompleteDelegate.Broadcast();
+
+	SetFlagStartLocation();
+	SetPlayerPositionAndPlayAnim();
 }
