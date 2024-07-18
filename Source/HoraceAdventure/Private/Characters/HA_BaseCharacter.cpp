@@ -23,6 +23,7 @@ AHA_BaseCharacter::AHA_BaseCharacter()
 	CameraBoomComponent->bInheritYaw = false;
 	CameraBoomComponent->bEnableCameraLag = true;
 	CameraBoomComponent->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+	CameraBoomComponent->SetRelativeLocation(FVector(0.f, 0.f, 400.f));
 
 	// ReSharper disable CppVirtualFunctionCallInsideCtor
 	UCharacterMovementComponent* CharacterMovementComponent = Cast<UCharacterMovementComponent>(GetMovementComponent());
