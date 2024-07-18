@@ -155,17 +155,56 @@ void AHA_EndOfLevelFlag::SetPlayerPositionAndPlayAnim() const
 
 void AHA_EndOfLevelFlag::AnimateCharacterDownThePole()
 {
+	const FVector ToLocation = PlayerEndPoint->GetComponentLocation();
+	float MoveTime = 1.f;
+	
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = Horace;
-	const FVector ToLocation = PlayerEndPoint->GetComponentLocation();
 	UKismetSystemLibrary::MoveComponentTo(
 		Horace->GetCapsuleComponent(),
 		ToLocation,
 		PlayerEndPoint->GetComponentRotation(),
-		false, false, 1.f, false,
+		false, false, MoveTime, false,
 		EMoveComponentAction::Move,
 		LatentInfo
 	);
+
+	if (PlayerJumpOffPoleAnimation)
+	{
+		DELAY(MoveTime, [this]()
+		{
+			Horace->GetMesh()->PlayAnimation(PlayerJumpOffPoleAnimation, false);	
+		});
+	}
+
+	if (PlayerJumpFallLoopAnimation)
+	{
+		DELAY(MoveTime, [this, LatentInfo]()
+		{
+			Horace->GetMesh()->PlayAnimation(PlayerJumpFallLoopAnimation, false);
+			UKismetSystemLibrary::MoveComponentTo(
+				Horace->GetCapsuleComponent(),
+				PlayerExplodePoint->GetComponentLocation(),
+				PlayerExplodePoint->GetComponentRotation(),
+				false, false, .5, false,
+				EMoveComponentAction::Move,
+				LatentInfo
+			);
+		});
+	}
+
+	DELAY(2.f, [this]()
+	{
+		UFunctionsLibrary::PlayInteractFx(
+			this, nullptr,
+			ExplodeEffect,
+			Horace->GetCapsuleComponent()->GetComponentLocation(),
+			FVector(2.f)
+		);
+		UFunctionsLibrary::PlaySoundFx(this, ExplosionSound);
+
+		Horace->GetCapsuleComponent()->SetVisibility(false, true);
+	});
 }
 
 void AHA_EndOfLevelFlag::AnimateFlagDownThePole()

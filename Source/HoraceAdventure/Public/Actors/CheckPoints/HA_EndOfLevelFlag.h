@@ -71,7 +71,19 @@ protected:
 	UAnimationAsset* PlayerGrabPoleAnimation;
 
 	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	UAnimationAsset* PlayerJumpOffPoleAnimation;
+
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	UAnimationAsset* PlayerJumpFallLoopAnimation;
+
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	UParticleSystem* ExplodeEffect;
+	
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
 	USoundBase* FlagPoleSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	USoundBase* ExplosionSound;
 
 	UPROPERTY()
 	AHA_Horace* Horace;

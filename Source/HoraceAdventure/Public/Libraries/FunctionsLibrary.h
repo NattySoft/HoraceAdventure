@@ -6,6 +6,10 @@
 #include "NiagaraSystem.h"
 #include "FunctionsLibrary.generated.h"
 
+#define DELAY(seconds, ...) \
+	FTimerHandle __tempTimerHandle; \
+	GetWorldTimerManager().SetTimer(__tempTimerHandle, FTimerDelegate().CreateLambda(__VA_ARGS__), seconds, false);
+
 class AHA_Horace;
 /**
  * 
@@ -28,5 +32,5 @@ public:
 
 	UFUNCTION(Category="Horace|Libraries")
 	static void PrintDebugMessage(const FString& DebugMessage, int32 Key = -1, float TimeToDisplay = 3.f, FColor DisplayColor = FColor::Green, bool bNewerOnTop = true, const FVector2D& TextScale = FVector2D::UnitVector);
-	
+
 };
