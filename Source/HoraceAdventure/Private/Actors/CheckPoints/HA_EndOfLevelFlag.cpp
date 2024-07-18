@@ -238,9 +238,10 @@ void AHA_EndOfLevelFlag::PlayAllFireworks()
 	{
 		for (int i = 0; i < FireworkShowSpecialNumber; ++i)
 		{
+			float TimerTime = 0.f;
 			constexpr float BaseTimerTime = .5f;
 			FTimerHandle FireworkTimer;
-			const float TimerTime = i == 0 ? BaseTimerTime : TimerTime + BaseTimerTime;
+			TimerTime = i == 0 ? BaseTimerTime : TimerTime + BaseTimerTime;
 			GetWorldTimerManager().SetTimer(FireworkTimer, this, &AHA_EndOfLevelFlag::PlaySingleFirework, TimerTime);
 		}
 	}

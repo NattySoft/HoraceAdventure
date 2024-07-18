@@ -36,9 +36,16 @@ void AHA_LevelSettings::BeginPlay()
 	PlayerController = Cast<AHA_PlayerController>(UGameplayStatics::GetPlayerController(this, 0));
 	checkf(GameMode, TEXT("AHA_LevelSettings::BeginPlay PlayerController is not a type of AHA_PlayerController"));
 	
-	PlayerRespawned();
 	ResetLevelTime();
+	StartGameLoop();
+}
+
+void AHA_LevelSettings::StartGameLoop()
+{
+	PlayerRespawned();
 	SetAudioToPlay();
+	StartLevelTimer();
+	StopAnyMusicAndTimer();	
 }
 
 void AHA_LevelSettings::PlayerRespawned()
@@ -46,7 +53,7 @@ void AHA_LevelSettings::PlayerRespawned()
 	GameMode->PlayerRespawned.AddLambda([this]()
 	{
 		LevelMusicComponent->SetPitchMultiplier(1.0f);
-		PlayerRespawned();
+		StartGameLoop();
 	});
 }
 
@@ -75,13 +82,14 @@ void AHA_LevelSettings::RunLevelTimer()
 {
 	if (TimeLimitCurrent == 0)
 	{
-		LevelTimer.Invalidate();
+		UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(this, LevelTimer);
 		LevelMusicComponent->Stop();
 		TimeRunningOutWarningComponent->Stop();
 		AHA_Horace* Horace = UFunctionsLibrary::GetHorace(UGameplayStatics::GetPlayerCharacter(this, 0));
 		if (Horace) Horace->PlayerDies();
 		return;
 	}
+	
 	TimeLimitCurrent--;
 	PlayerController->SetLevelTime(TimeLimitCurrent);
 
@@ -89,5 +97,30 @@ void AHA_LevelSettings::RunLevelTimer()
 	{
 		LevelMusicComponent->SetPaused(true);
 		TimeRunningOutWarningComponent->Play();
+		TimeRunningOutWarningComponent->OnAudioFinished.AddDynamic(this, &AHA_LevelSettings::RestartMusic);
+	}
+
+	// 2.8 is the time that TimeRunningOutWarningComponent takes to play
+	// FTimerHandle RestartHandler;
+	// GetWorldTimerManager().SetTimer(RestartHandler, this, &AHA_LevelSettings::RestartMusic, 3.8f, false);
+}
+
+void AHA_LevelSettings::RestartMusic()
+{
+	LevelMusicComponent->SetPaused(false);
+	LevelMusicComponent->SetPitchMultiplier(1.05f);
+}
+
+void AHA_LevelSettings::StopAnyMusicAndTimer()
+{
+	AHA_Horace* Horace = UFunctionsLibrary::GetHorace(UGameplayStatics::GetPlayerCharacter(this, 0));
+	if (Horace)
+	{
+		Horace->PlayerStartsDeathSequence.AddLambda([this]()
+		{
+			LevelMusicComponent->Stop();
+			TimeRunningOutWarningComponent->Stop();
+			UKismetSystemLibrary::K2_ClearAndInvalidateTimerHandle(this, LevelTimer);
+		});
 	}
 }

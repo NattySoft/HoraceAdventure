@@ -55,6 +55,8 @@ private:
 	AHA_PlayerController* PlayerController;
 
 	FTimerHandle LevelTimer;
+
+	void StartGameLoop();
 	
 	void PlayerRespawned();
 	void ResetLevelTime();
@@ -63,4 +65,10 @@ private:
 	UFUNCTION()
 	void StartLevelTimer();
 	void RunLevelTimer();
+
+	UFUNCTION()
+	void RestartMusic();
+	void StopAnyMusicAndTimer();
+
+	
 };
