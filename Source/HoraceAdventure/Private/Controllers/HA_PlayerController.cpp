@@ -72,3 +72,21 @@ void AHA_PlayerController::SetLevelTime(const int32 InValue)
 	LevelTime = InValue;
 	OnTimeChangesDelegate.Broadcast(LevelTime);
 }
+
+void AHA_PlayerController::SetLives(const int32 Value)
+{
+	Lives = Value;
+	OnLivesChangesDelegate.Broadcast(Lives);
+}
+
+void AHA_PlayerController::SetCoins(const int32 Value)
+{
+	Coins = Value;
+	OnCoinChangesDelegate.Broadcast(Coins);
+}
+
+void AHA_PlayerController::SetPoints(const int32 Value)
+{
+	Points = Value;
+	OnPointsChangesDelegate.Broadcast(Points);
+}

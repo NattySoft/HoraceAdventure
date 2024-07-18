@@ -36,5 +36,7 @@ public:
 	FPlayerRespawned PlayerRespawned;
 	
 	FORCEINLINE void SetSpawnTransform(const FTransform& Transform) { SpawnTransform = Transform; }
+
+	void CarryOverGameStats() const;
 	
 };

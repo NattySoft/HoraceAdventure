@@ -5,12 +5,15 @@
 
 #include "Characters/HA_Horace.h"
 #include "Controllers/HA_PlayerController.h"
+#include "Core/HA_GameInstance.h"
 #include "Kismet/GameplayStatics.h"
 
 void AHA_GameModeBase::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CarryOverGameStats();
+	
 	Horace = Cast<AHA_Horace>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
 	checkf(Horace, TEXT("AHA_GameModeBase::BeginPlay Horace is not defined"));
 	checkf(HoraceClass, TEXT("AHA_GameModeBase::BeginPlay HoraceClass is not defined"));
@@ -40,4 +43,17 @@ void AHA_GameModeBase::Respawn()
 		//Broadcast the respawn
 		PlayerRespawned.Broadcast();
 	}
+}
+
+void AHA_GameModeBase::CarryOverGameStats() const
+{
+	const UHA_GameInstance* GI = Cast<UHA_GameInstance>(GetGameInstance());
+	check(GI);
+
+	AHA_PlayerController* PlayerController = Cast<AHA_PlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0));
+	check(PlayerController);
+	
+	PlayerController->SetCoins(GI->Coins);
+	PlayerController->SetLives(GI->Lives);
+	PlayerController->SetPoints(GI->Points);
 }

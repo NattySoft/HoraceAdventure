@@ -56,6 +56,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
 	int32 LevelTimeAwardPoints = 50;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="LevelSettings|Settings")
+	FName LevelToGoTo;
 	
 private:
 	UPROPERTY()
@@ -86,6 +89,9 @@ private:
 	void StartDecrementLevelTime();
 	UFUNCTION()
 	void DecrementLevelTimeUpdate();
+
+	UFUNCTION()
+	void MoveToNextLevel();
 	
 public:
 	FORCEINLINE UAudioComponent* GetLevelMusicComponent() const { return LevelMusicComponent; }

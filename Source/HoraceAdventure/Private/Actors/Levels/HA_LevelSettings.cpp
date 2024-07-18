@@ -7,6 +7,7 @@
 #include "Characters/HA_Horace.h"
 #include "Components/AudioComponent.h"
 #include "Controllers/HA_PlayerController.h"
+#include "Core/HA_GameInstance.h"
 #include "Core/HA_GameModeBase.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
@@ -40,6 +41,7 @@ void AHA_LevelSettings::BeginPlay()
 	checkf(GameMode, TEXT("AHA_LevelSettings::BeginPlay PlayerController is not a type of AHA_PlayerController"));
 	
 	ResetLevelTime();
+	CheckEndOfLevelCompleted();
 	StartGameLoop();
 }
 
@@ -49,7 +51,6 @@ void AHA_LevelSettings::StartGameLoop()
 	SetAudioToPlay();
 	StartLevelTimer();
 	StopAnyMusicAndTimer();
-	CheckEndOfLevelCompleted();
 }
 
 void AHA_LevelSettings::PlayerRespawned()
@@ -145,7 +146,7 @@ void AHA_LevelSettings::CheckEndOfLevelCompleted()
 void AHA_LevelSettings::StartDecrementLevelTime()
 {
 	LevelCompleteComponent->Activate();
-	
+
 	const int32 LoopCount = PlayerController->GetLevelTime();
 	float TimerTime = 0.f;
 	for (int i = 0; i < LoopCount; i++)
@@ -155,6 +156,11 @@ void AHA_LevelSettings::StartDecrementLevelTime()
 		TimerTime = i == 0 ? BaseTimerTime : TimerTime + BaseTimerTime;
 		GetWorldTimerManager().SetTimer(DecrementLevelTimer, this, &AHA_LevelSettings::DecrementLevelTimeUpdate, TimerTime);
 	}
+
+	// Move to next level after all the timers before are completed
+	FTimerHandle DecrementLevelTimer;
+	TimerTime = TimerTime + 3;
+	GetWorldTimerManager().SetTimer(DecrementLevelTimer, this, &AHA_LevelSettings::MoveToNextLevel, TimerTime);
 }
 
 void AHA_LevelSettings::DecrementLevelTimeUpdate()
@@ -162,4 +168,20 @@ void AHA_LevelSettings::DecrementLevelTimeUpdate()
 	PlayerController->SetLevelTime(PlayerController->GetLevelTime() - 1);
 	PlayerController->AddPoints(LevelTimeAwardPoints);
 	UFunctionsLibrary::PlaySoundFx(this, LevelCompleteSound);
+}
+
+void AHA_LevelSettings::MoveToNextLevel()
+{
+	UHA_GameInstance* HaGameInstance = Cast<UHA_GameInstance>(GetGameInstance());
+	check(HaGameInstance);
+
+	if (LevelToGoTo.IsNone()) return;
+	HaGameInstance->Coins = PlayerController->GetCoins();
+	HaGameInstance->Points = PlayerController->GetPoints();
+	HaGameInstance->Lives = PlayerController->GetLives();
+
+	DELAY(1.f, [this]
+	{
+		UGameplayStatics::OpenLevel(this, LevelToGoTo);
+	});
 }

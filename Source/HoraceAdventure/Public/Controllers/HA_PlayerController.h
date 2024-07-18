@@ -59,9 +59,16 @@ public:
 
 	FORCEINLINE int32 GetLives() const { return Lives; }
 	FORCEINLINE int32 GetLevelTime() const { return LevelTime; }
+	FORCEINLINE int32 GetCoins() const { return Coins; }
+	FORCEINLINE int32 GetPoints() const { return Points; }
 	
 	void AddCoin(const int32 InValue);
 	void AddLife(const int32 InValue);
 	void AddPoints(const int32 InPoints);
 	void SetLevelTime(const int32 InValue);
+
+	void SetLives(const int32 Value);
+	void SetCoins(const int32 Value);
+	void SetPoints(const int32 Value);
+	
 };
