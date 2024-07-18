@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "HA_EndOfLevelFlag.generated.h"
 
+class AHA_PointsActor;
 class AHA_PlayerController;
 class AHA_Horace;
 class UArrowComponent;
@@ -78,6 +79,9 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
 	UParticleSystem* ExplodeEffect;
+
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	UParticleSystem* FireworksEffect;
 	
 	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
 	USoundBase* FlagPoleSound;
@@ -85,6 +89,12 @@ protected:
 	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
 	USoundBase* ExplosionSound;
 
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	USoundBase* FireworksSound;
+
+	UPROPERTY(EditDefaultsOnly, Category="EndOfLevelFlag")
+	TSubclassOf<AHA_PointsActor> PointsActorClass;
+	
 	UPROPERTY()
 	AHA_Horace* Horace;
 
@@ -134,5 +144,9 @@ public:
 	
 	void AnimateCharacterDownThePole();
 	void AnimateFlagDownThePole();
-	
+	void PlayAllFireworks();
+
+	UFUNCTION()
+	void PlaySingleFirework();
+	void ShowPointsWidget(const FTransform& SpawnTransform, int32 Points) const;
 };

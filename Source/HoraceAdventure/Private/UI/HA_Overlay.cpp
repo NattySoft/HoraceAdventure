@@ -30,4 +30,9 @@ void UHA_Overlay::BindControllerDelegates()
 	{
 		PointsValue_Text->SetText(FText::FromString(FString::Printf(TEXT("%d"), InValue)));
 	});
+
+	HoraceController->OnTimeChangesDelegate.AddLambda([this](const int32 InValue)
+	{
+		TimerValue_Text->SetText(FText::FromString(FString::Printf(TEXT("%d"), InValue)));
+	});
 }

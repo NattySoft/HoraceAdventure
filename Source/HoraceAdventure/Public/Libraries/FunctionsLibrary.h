@@ -21,7 +21,8 @@ class HORACEADVENTURE_API UFunctionsLibrary : public UBlueprintFunctionLibrary
 	
 public:
 	UFUNCTION(Category="Horace|Libraries", meta=(DefaultToSelf = "WorldContextObject"))
-	static void PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX, float Delay = 0.f);
+	static void PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX, const float Delay = 0.f);
+	static void PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX, FVector& Location, const float Delay = 0.f);
 
 	UFUNCTION(Category="Horace|Libraries", meta=(DefaultToSelf = "WorldContextObject"))
 	static void PlayInteractFx(const UObject* WorldContextObject, UNiagaraSystem* VFX_Niagara,

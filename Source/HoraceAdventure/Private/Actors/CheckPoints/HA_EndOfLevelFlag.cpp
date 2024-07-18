@@ -3,6 +3,7 @@
 
 #include "Actors/CheckPoints/HA_EndOfLevelFlag.h"
 
+#include "Actors/HA_PointsActor.h"
 #include "Characters/HA_Horace.h"
 #include "Components/ArrowComponent.h"
 #include "Components/BillboardComponent.h"
@@ -11,6 +12,7 @@
 #include "Controllers/HA_PlayerController.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Libraries/FunctionsLibrary.h"
 
 AHA_EndOfLevelFlag::AHA_EndOfLevelFlag()
@@ -204,6 +206,7 @@ void AHA_EndOfLevelFlag::AnimateCharacterDownThePole()
 		UFunctionsLibrary::PlaySoundFx(this, ExplosionSound);
 
 		Horace->GetCapsuleComponent()->SetVisibility(false, true);
+		PlayAllFireworks();
 	});
 }
 
@@ -220,6 +223,58 @@ void AHA_EndOfLevelFlag::AnimateFlagDownThePole()
 		EMoveComponentAction::Move,
 		LatentInfo
 	);
+}
+
+void AHA_EndOfLevelFlag::PlayAllFireworks()
+{
+	if (!HoraceController) return;
+
+	const FString LevelTime = FString::FromInt(HoraceController->GetLevelTime());
+	const FString RightLevelTime = LevelTime.Right(1);
+	const FString FireworkShowSpecialNumberString = FString::FromInt(FireworkShowSpecialNumber);
+
+	// Check if the last digit of time remaining = "Fireworks Show #"
+	if (FireworkShowSpecialNumberString.Equals(RightLevelTime))
+	{
+		for (int i = 0; i < FireworkShowSpecialNumber; ++i)
+		{
+			constexpr float BaseTimerTime = .5f;
+			FTimerHandle FireworkTimer;
+			const float TimerTime = i == 0 ? BaseTimerTime : TimerTime + BaseTimerTime;
+			GetWorldTimerManager().SetTimer(FireworkTimer, this, &AHA_EndOfLevelFlag::PlaySingleFirework, TimerTime);
+		}
+	}
+}
+
+void AHA_EndOfLevelFlag::PlaySingleFirework()
+{
+	const FVector FireworksLocation = UKismetMathLibrary::RandomPointInBoundingBox(
+					FireworksArea->GetComponentLocation(),
+					FireworksArea->GetUnscaledBoxExtent()
+				);
+
+	FireworkLocale = FireworksLocation;
+	UFunctionsLibrary::PlayInteractFx(this, nullptr,
+		FireworksEffect, FireworkLocale,
+		FVector(10.f));
+
+	UFunctionsLibrary::PlaySoundFx(this, FireworksSound, FireworkLocale);
+
+	FTransform PointsTransform;
+	PointsTransform.SetLocation(FireworkLocale);
+	ShowPointsWidget(PointsTransform, FireworkPoints);
+}
+
+void AHA_EndOfLevelFlag::ShowPointsWidget(const FTransform& SpawnTransform, const int32 Points) const
+{
+	if (PointsActorClass)
+	{
+		FActorSpawnParameters SpawnParameters;		
+		AHA_PointsActor* PointsActor = GetWorld()->SpawnActorDeferred<AHA_PointsActor>(PointsActorClass, FTransform::Identity);
+		if (PointsActor) PointsActor->SetPointsToAdd(Points);
+		if (HoraceController) HoraceController->AddPoints(Points);
+		UGameplayStatics::FinishSpawningActor(PointsActor, SpawnTransform);
+	}
 }
 
 void AHA_EndOfLevelFlag::StartAnimationsAndEffects()

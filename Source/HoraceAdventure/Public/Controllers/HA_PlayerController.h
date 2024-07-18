@@ -38,7 +38,7 @@ protected:
 	int32 Points = 0;
 
 	UPROPERTY(EditAnywhere, Category="Gameplay")
-	int32 LevelTime = 500;
+	int32 LevelTime = 447;
 	
 	UPROPERTY(EditAnywhere, Category="Gameplay")
 	USoundBase* LivesUpSound;
@@ -58,6 +58,7 @@ public:
 	AHA_HUD* GetHoraceHUD();
 
 	FORCEINLINE int32 GetLives() const { return Lives; }
+	FORCEINLINE int32 GetLevelTime() const { return LevelTime; }
 	
 	void AddCoin(const int32 InValue);
 	void AddLife(const int32 InValue);

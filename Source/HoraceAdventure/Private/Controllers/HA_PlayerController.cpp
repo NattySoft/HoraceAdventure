@@ -15,7 +15,7 @@ void AHA_PlayerController::OnPossess(APawn* InPawn)
 		OnCoinChangesDelegate.Broadcast(Coins);
 		OnLivesChangesDelegate.Broadcast(Lives);
 		OnPointsChangesDelegate.Broadcast(Points);
-		// OnTimeChangesDelegate.Broadcast(Time);
+		OnTimeChangesDelegate.Broadcast(LevelTime);
 	}
 }
 

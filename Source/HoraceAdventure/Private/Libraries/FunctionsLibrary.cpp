@@ -19,16 +19,26 @@
  */
 void UFunctionsLibrary::PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX, const float Delay)
 {
+	FVector Location = FVector::ZeroVector;
+	PlaySoundFx(WorldContextObject, SFX, Location, Delay);
+}
+
+void UFunctionsLibrary::PlaySoundFx(const UObject* WorldContextObject, USoundBase* SFX, FVector& Location, float Delay)
+{
 	if (SFX && Delay <= 0)
 	{
-		UGameplayStatics::PlaySound2D(WorldContextObject, SFX);
+		Location == FVector::ZeroVector ?
+		UGameplayStatics::PlaySound2D(WorldContextObject, SFX) :
+		UGameplayStatics::PlaySoundAtLocation(WorldContextObject, SFX, Location, FRotator::ZeroRotator);
 	}
 	else if (SFX)
 	{
 		FTimerDelegate TimerCallback;
-		TimerCallback.BindLambda([WorldContextObject, SFX]
+		TimerCallback.BindLambda([WorldContextObject, SFX, Location]
 		{
-			UGameplayStatics::PlaySound2D(WorldContextObject, SFX);
+			Location == FVector::ZeroVector ?
+			UGameplayStatics::PlaySound2D(WorldContextObject, SFX) :
+			UGameplayStatics::PlaySoundAtLocation(WorldContextObject, SFX, Location, FRotator::ZeroRotator);
 		});
 		
 		FTimerHandle DelayHandler;
