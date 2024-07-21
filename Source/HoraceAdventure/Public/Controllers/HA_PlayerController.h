@@ -21,6 +21,7 @@ class HORACEADVENTURE_API AHA_PlayerController : public APlayerController
 protected:
 	virtual void OnPossess(APawn* InPawn) override;
 	
+	
 	UPROPERTY()
 	AHA_HUD* HoraceHud;
 	
@@ -45,7 +46,7 @@ protected:
 
 	UPROPERTY(EditAnywhere, Category="Gameplay")
 	USoundBase* PointsSound;
-	
+
 public:
 	// Delegates
 	FOnCoinChangesDelegate OnCoinChangesDelegate;
@@ -57,6 +58,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	AHA_HUD* GetHoraceHUD();
 
+	UFUNCTION(BlueprintCallable)
+	void TogglePauseMenu();
+	
 	FORCEINLINE int32 GetLives() const { return Lives; }
 	FORCEINLINE int32 GetLevelTime() const { return LevelTime; }
 	FORCEINLINE int32 GetCoins() const { return Coins; }

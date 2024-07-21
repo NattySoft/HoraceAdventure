@@ -4,6 +4,7 @@
 #include "Controllers/HA_PlayerController.h"
 
 #include "Kismet/GameplayStatics.h"
+#include "Libraries/FunctionsLibrary.h"
 #include "UI/HA_HUD.h"
 
 void AHA_PlayerController::OnPossess(APawn* InPawn)
@@ -23,6 +24,20 @@ AHA_HUD* AHA_PlayerController::GetHoraceHUD()
 {
 	HoraceHud = HoraceHud == nullptr ? Cast<AHA_HUD>(GetHUD()) : HoraceHud;
 	return HoraceHud;
+}
+
+void AHA_PlayerController::TogglePauseMenu()
+{
+	if (!bShowMouseCursor)
+	{
+		bShowMouseCursor = true;
+		GetHoraceHUD()->ShowPauseMenu(this);
+	}
+	else
+	{
+		bShowMouseCursor = false;
+		GetHoraceHUD()->HidePauseMenu();
+	}
 }
 
 void AHA_PlayerController::AddCoin(const int32 InValue)

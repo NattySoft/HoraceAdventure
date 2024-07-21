@@ -6,6 +6,7 @@
 #include "GameFramework/HUD.h"
 #include "HA_HUD.generated.h"
 
+class UHA_PauseMenu;
 class AHA_Horace;
 class UHA_Overlay;
 /**
@@ -28,8 +29,16 @@ protected:
 	UPROPERTY()
 	UHA_Overlay* OverlayWidget;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> PauseMenuWidgetClass;
+
+	UPROPERTY()
+	UHA_PauseMenu* PauseMenuWidget;
+
 public:
-	void AddCharacterOverlay(APlayerController* InController);
-	
 	FORCEINLINE UHA_Overlay* GetOverlay() const { return OverlayWidget; }
+
+	void AddCharacterOverlay(APlayerController* InController);
+	void ShowPauseMenu(APlayerController* InController);
+	void HidePauseMenu() const;
 };
