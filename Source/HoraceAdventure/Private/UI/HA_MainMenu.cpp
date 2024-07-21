@@ -17,6 +17,8 @@ void UHA_MainMenu::NativeConstruct()
 
 	FTimerHandle IntroTimer;
 	GetWorld()->GetTimerManager().SetTimer(IntroTimer, this, &UHA_MainMenu::PlayIntroAnimation, 2.f, false);
+
+	ButtonPlay->SetFocus();
 }
 
 void UHA_MainMenu::OnButtonPlayClicked()
