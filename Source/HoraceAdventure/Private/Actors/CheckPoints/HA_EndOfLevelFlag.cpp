@@ -123,7 +123,7 @@ void AHA_EndOfLevelFlag::SetPlayerPositionAndPlayAnim() const
 void AHA_EndOfLevelFlag::AnimateCharacterDownThePole()
 {
 	const FVector ToLocation = PlayerEndPoint->GetComponentLocation();
-	float MoveTime = 1.f;
+	constexpr float MoveTime = 1.f;
 	
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = Horace;
@@ -194,12 +194,13 @@ void AHA_EndOfLevelFlag::PlayAllFireworks()
 {
 	if (!HoraceController) return;
 
-	const FString LevelTime = FString::FromInt(HoraceController->GetLevelTime());
-	const FString RightLevelTime = LevelTime.Right(1);
-	const FString FireworkShowSpecialNumberString = FString::FromInt(FireworkShowSpecialNumber);
+	// const FString LevelTime = FString::FromInt(HoraceController->GetLevelTime());
+	// const FString RightLevelTime = LevelTime.Right(1);
+	// const FString FireworkShowSpecialNumberString = FString::FromInt(FireworkShowSpecialNumber);
 
 	// Check if the last digit of time remaining = "Fireworks Show #"
-	if (FireworkShowSpecialNumberString.Equals(RightLevelTime))
+	// if (FireworkShowSpecialNumberString.Equals(RightLevelTime))
+	if (FireworkShowSpecialNumber < HoraceController->GetLevelTime())
 	{
 		float TimerTime = 0.f;
 		for (int i = 0; i < FireworkShowSpecialNumber; i++)

@@ -107,7 +107,7 @@ protected:
 	UPROPERTY(EditAnywhere, Category="EndOfLevelFlag")
 	int32 FireworkPoints = 500;
 	UPROPERTY(EditAnywhere, Category="EndOfLevelFlag")
-	int32 FireworkShowSpecialNumber = 7;
+	int32 FireworkShowSpecialNumber = 50;
 	
 private:
 	bool bTriggerVolumeBeginOverlapped = false;
