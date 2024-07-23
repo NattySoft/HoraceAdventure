@@ -78,6 +78,12 @@ protected:
 	UPROPERTY(EditAnywhere, Category="Horace|Health")
 	bool bHasFireFlower = false;
 
+	UPROPERTY(EditAnywhere, Category="Horace|Movements")
+	float WalkSpeed = 650.f;
+
+	UPROPERTY(EditAnywhere, Category="Horace|Movements")
+	float RunSpeed = 1200.f;
+
 	UPROPERTY()
 	AHA_WarpPipe* OverlappingPipe;
 
@@ -128,6 +134,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void InteractWithPipe();
+
+	UFUNCTION(BlueprintCallable)
+	void SprintStart();
+
+	UFUNCTION(BlueprintCallable)
+	void SprintStop();
 
 	void SetNextSpawnLocation(const FTransform& InTransform) const;
 

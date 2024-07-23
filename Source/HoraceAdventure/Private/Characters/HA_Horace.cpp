@@ -10,6 +10,7 @@
 #include "Components/CapsuleComponent.h"
 #include "Controllers/HA_PlayerController.h"
 #include "Core/HA_GameModeBase.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Libraries/FunctionsLibrary.h"
@@ -25,6 +26,8 @@ AHA_Horace::AHA_Horace()
 	FlagAttachPoint->SetupAttachment(GetRootComponent());
 
 	FlagAttachPoint->SetRelativeLocation(FVector(40.f, 0.f, -65.f));
+
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void AHA_Horace::BeginPlay()
@@ -102,6 +105,16 @@ void AHA_Horace::InteractWithPipe()
 {
 	if (!OverlappingPipe) return;
 	OverlappingPipe->Interact(this);
+}
+
+void AHA_Horace::SprintStart()
+{
+	GetCharacterMovement()->MaxWalkSpeed = RunSpeed;
+}
+
+void AHA_Horace::SprintStop()
+{
+	GetCharacterMovement()->MaxWalkSpeed = WalkSpeed;
 }
 
 void AHA_Horace::SetNextSpawnLocation(const FTransform& InTransform) const
