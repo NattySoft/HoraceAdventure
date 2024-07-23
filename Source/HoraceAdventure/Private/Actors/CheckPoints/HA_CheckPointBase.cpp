@@ -71,10 +71,10 @@ void AHA_CheckPointBase::OnBoxBeginOverlap(UPrimitiveComponent* OverlappedCompon
 {
 	if (bFlagArmRotated) return;
 
-	bFlagArmRotated = true;
 	AHA_Horace* Horace = UFunctionsLibrary::GetHorace(OtherActor);
 	if (!Horace) return;
 
+	bFlagArmRotated = true;
 	Horace->SetNextSpawnLocation(RespawnTransform->GetComponentTransform());
 	CheckPointMove();
 }

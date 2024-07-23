@@ -29,6 +29,7 @@ void UHA_GrowingComponent::BeginPlay()
 	
 	if (MovingCurve)
 	{
+		
 		FOnTimelineFloat ProgressUpdate;
 		ProgressUpdate.BindUFunction(this, "MovingUpdate");
 		MovingTimeline.SetLooping(false);
@@ -49,6 +50,7 @@ void UHA_GrowingComponent::TickTimeline()
 	}
 	else
 	{
+		UGameplayStatics::SetGlobalTimeDilation(this, 1.f);
 		if (TimelineDirection == ETimelineDirection::Forward)
 		{
 			Player->GetCapsuleComponent()->SetCapsuleHalfHeight(CapsuleForwardHalfHeight);
@@ -87,6 +89,8 @@ void UHA_GrowingComponent::ReverseTimeline()
 void UHA_GrowingComponent::Start()
 {
 	if (!IsValid(Player)) return;
+
+	UGameplayStatics::SetGlobalTimeDilation(GetOwner(), .8f);
 	Player->SetHasFireFlower(true);
 	
 	// Play the sound
